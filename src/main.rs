@@ -1,6 +1,9 @@
+extern crate itertools;
+
 #[macro_use]
 extern crate quicli;
 
+use itertools::Itertools;
 use quicli::prelude::*;
 use std::fmt;
 
@@ -118,6 +121,61 @@ fn smallest_multiple(upper: usize) -> usize {
     soln
 }
 
+struct TriangleGenerator {
+    nth: usize,
+    val: usize,
+}
+
+impl TriangleGenerator {
+    fn new(nth: usize) -> TriangleGenerator {
+        TriangleGenerator { nth, val: (1..(nth + 1)).sum() }
+    }
+}
+
+impl Iterator for TriangleGenerator {
+    type Item = usize;
+
+    fn next(&mut self) -> Option<usize> {
+        self.nth += 1;
+        self.val += self.nth;
+
+        Some(self.val)
+    }
+}
+
+fn prime_ftor_count(val: usize) -> usize {
+    let mut prime_ftors = vec![];
+
+    let mut _val = val;
+    while _val > 1 {
+        for v in 2..(_val + 1) {
+            if _val % v == 0 {
+                prime_ftors.push(v);
+                _val /= v;
+                break;  // Break the for-loop
+            }
+        }
+        // Possible to starve?
+    }
+
+    prime_ftors.sort();
+    prime_ftors.into_iter()
+               .group_by(|elt| *elt)
+               .into_iter()
+               .map(|(_k, grp)| grp.count() + 1)
+               .product()
+}
+
+fn divisible_triangle(divisors: usize) -> usize {
+    for val in TriangleGenerator::new(8) {
+        if prime_ftor_count(val) > divisors {
+          return val;
+        }
+    }
+
+    0
+}
+
 main!(|args: Cli| {
     let time = std::time::SystemTime::now();
 
@@ -127,6 +185,7 @@ main!(|args: Cli| {
         3 => largest_prime_factor(600_851_475_143),
         4 => largest_palindrome_product(3),
         5 => smallest_multiple(20),
+        12 => divisible_triangle(500),
         _ => unimplemented!(),
     };
 
