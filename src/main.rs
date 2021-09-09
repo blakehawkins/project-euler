@@ -1,9 +1,8 @@
-extern crate itertools;
-
 #[macro_use]
 extern crate quicli;
 
 use itertools::Itertools;
+use num_bigint::{BigUint, ToBigUint};
 use quicli::prelude::*;
 use std::fmt;
 
@@ -55,7 +54,7 @@ fn _primes_through(z: usize) -> Vec<usize> {
         scratch.retain(|&x| x == *s || x % s != 0);
     }
 
-    scratch.clone()
+    scratch
 }
 
 fn largest_prime_factor(z: usize) -> usize {
@@ -79,8 +78,8 @@ fn largest_prime_factor(z: usize) -> usize {
 }
 
 fn largest_palindrome_product(digits: u32) -> usize {
-    let lower = (10 as usize).pow(digits - 1);
-    let upper: usize = (10 as usize).pow(digits);
+    let lower = (10usize).pow(digits - 1);
+    let upper: usize = (10usize).pow(digits);
 
     let mut biggest = 1;
 
@@ -88,10 +87,8 @@ fn largest_palindrome_product(digits: u32) -> usize {
         for j in i..upper {
             let v = i * j;
             let repr = v.to_string();
-            if repr == repr.chars().rev().collect::<String>() {
-                if v > biggest {
-                    biggest = v;
-                }
+            if repr == repr.chars().rev().collect::<String>() && v > biggest {
+                biggest = v;
             }
         }
     }
@@ -100,22 +97,22 @@ fn largest_palindrome_product(digits: u32) -> usize {
 }
 
 fn smallest_multiple(upper: usize) -> usize {
-    let mut try = 2520;
+    let mut tr = 2520;
     let soln;
 
     loop {
-        let mut scratch: Vec<usize> = (try..(try * 2)).into_iter().collect();
+        let mut scratch: Vec<usize> = (tr..(tr * 2)).into_iter().collect();
         for sieve in 11..(upper + 1) {
             scratch.retain(|&x| x % sieve == 0);
         }
 
         if scratch.get(0).is_some() {
-            soln = scratch.get(0).unwrap().clone();
+            soln = *scratch.get(0).unwrap();
             break;
         }
 
-        try *= 2;
-        println!("{}", try);
+        tr *= 2;
+        println!("{}", tr);
     }
 
     soln
@@ -128,7 +125,10 @@ struct TriangleGenerator {
 
 impl TriangleGenerator {
     fn new(nth: usize) -> TriangleGenerator {
-        TriangleGenerator { nth, val: (1..(nth + 1)).sum() }
+        TriangleGenerator {
+            nth,
+            val: (1..(nth + 1)).sum(),
+        }
     }
 }
 
@@ -152,28 +152,40 @@ fn prime_ftor_count(val: usize) -> usize {
             if _val % v == 0 {
                 prime_ftors.push(v);
                 _val /= v;
-                break;  // Break the for-loop
+                break; // Break the for-loop
             }
         }
         // Possible to starve?
     }
 
-    prime_ftors.sort();
-    prime_ftors.into_iter()
-               .group_by(|elt| *elt)
-               .into_iter()
-               .map(|(_k, grp)| grp.count() + 1)
-               .product()
+    prime_ftors.sort_unstable();
+    prime_ftors
+        .into_iter()
+        .group_by(|elt| *elt)
+        .into_iter()
+        .map(|(_k, grp)| grp.count() + 1)
+        .product()
 }
 
 fn divisible_triangle(divisors: usize) -> usize {
     for val in TriangleGenerator::new(8) {
         if prime_ftor_count(val) > divisors {
-          return val;
+            return val;
         }
     }
 
     0
+}
+
+fn factorial_digit_sum(z: usize) -> usize {
+    (1..=z)
+        .map(|v| v.to_biguint().unwrap())
+        .product::<BigUint>()
+        .to_string()
+        .chars()
+        .map(|ch| ch.to_digit(10))
+        .map(Option::unwrap)
+        .sum::<u32>() as usize
 }
 
 main!(|args: Cli| {
@@ -186,6 +198,7 @@ main!(|args: Cli| {
         4 => largest_palindrome_product(3),
         5 => smallest_multiple(20),
         12 => divisible_triangle(500),
+        20 => factorial_digit_sum(100),
         _ => unimplemented!(),
     };
 
