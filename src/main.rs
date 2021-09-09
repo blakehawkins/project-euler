@@ -188,6 +188,18 @@ fn factorial_digit_sum(z: usize) -> usize {
         .sum::<u32>() as usize
 }
 
+fn square_lattice(dim: usize) -> usize {
+    let mut buf = (1..=dim).map(|_| vec![1usize; dim]).collect::<Vec<_>>();
+
+    for ii in (0..=(dim - 2)).rev() {
+        for jj in (0..=(dim - 2)).rev() {
+            buf[ii][jj] = buf[ii + 1][jj] + buf[ii][jj + 1];
+        }
+    }
+
+    buf[0][0] as usize
+}
+
 main!(|args: Cli| {
     let time = std::time::SystemTime::now();
 
@@ -198,6 +210,7 @@ main!(|args: Cli| {
         4 => largest_palindrome_product(3),
         5 => smallest_multiple(20),
         12 => divisible_triangle(500),
+        15 => square_lattice(21),
         20 => factorial_digit_sum(100),
         _ => unimplemented!(),
     };
