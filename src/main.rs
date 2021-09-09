@@ -200,6 +200,18 @@ fn square_lattice(dim: usize) -> usize {
     buf[0][0] as usize
 }
 
+fn fib_term_len(len: usize) -> usize {
+    let mut gen = (2, 1.to_biguint().unwrap(), 1.to_biguint().unwrap());
+
+    loop {
+        gen = (gen.0 + 1, gen.2.clone(), gen.1 + gen.2);
+
+        if gen.2.to_string().len() >= len {
+            break gen.0;
+        }
+    }
+}
+
 main!(|args: Cli| {
     let time = std::time::SystemTime::now();
 
@@ -212,6 +224,7 @@ main!(|args: Cli| {
         12 => divisible_triangle(500),
         15 => square_lattice(21),
         20 => factorial_digit_sum(100),
+        25 => fib_term_len(1000),
         _ => unimplemented!(),
     };
 
