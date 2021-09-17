@@ -1,6 +1,8 @@
 #[macro_use]
 extern crate quicli;
 
+use std::collections::HashMap;
+
 use itertools::Itertools;
 use num_bigint::{BigUint, ToBigUint};
 use quicli::prelude::*;
@@ -112,7 +114,6 @@ fn smallest_multiple(upper: usize) -> usize {
         }
 
         tr *= 2;
-        println!("{}", tr);
     }
 
     soln
@@ -212,6 +213,120 @@ fn fib_term_len(len: usize) -> usize {
     }
 }
 
+fn _number_letter_counts(val: usize) -> &'static str {
+    let map = vec![
+        (1000, "onethousand"),
+        (90, "ninety"),
+        (80, "eighty"),
+        (70, "seventy"),
+        (60, "sixty"),
+        (50, "fifty"),
+        (40, "forty"),
+        (30, "thirty"),
+        (20, "twenty"),
+        (19, "nineteen"),
+        (18, "eighteen"),
+        (17, "seventeen"),
+        (16, "sixteen"),
+        (15, "fifteen"),
+        (14, "fourteen"),
+        (13, "thirteen"),
+        (12, "twelve"),
+        (11, "eleven"),
+        (10, "ten"),
+        (9, "nine"),
+        (8, "eight"),
+        (7, "seven"),
+        (6, "six"),
+        (5, "five"),
+        (4, "four"),
+        (3, "three"),
+        (2, "two"),
+        (1, "one"),
+        (0, "")
+    ]
+    .into_iter()
+    .collect::<HashMap<usize, _>>();
+
+    map[&val]
+}
+
+fn number_letter_counts(max: usize) -> usize {
+    if max == 0 { return 0; }
+
+    let res = match max {
+        1000 => _number_letter_counts(1000).len(),
+        90 => _number_letter_counts(90).len(),
+        80 => _number_letter_counts(80).len(),
+        70 => _number_letter_counts(70).len(),
+        60 => _number_letter_counts(60).len(),
+        50 => _number_letter_counts(50).len(),
+        40 => _number_letter_counts(40).len(),
+        30 => _number_letter_counts(30).len(),
+        20 => _number_letter_counts(20).len(),
+        19 => _number_letter_counts(19).len(),
+        18 => _number_letter_counts(18).len(),
+        17 => _number_letter_counts(17).len(),
+        16 => _number_letter_counts(16).len(),
+        15 => _number_letter_counts(15).len(),
+        14 => _number_letter_counts(14).len(),
+        13 => _number_letter_counts(13).len(),
+        12 => _number_letter_counts(12).len(),
+        11 => _number_letter_counts(11).len(),
+        10 => _number_letter_counts(10).len(),
+        9 => _number_letter_counts(9).len(),
+        8 => _number_letter_counts(8).len(),
+        7 => _number_letter_counts(7).len(),
+        6 => _number_letter_counts(6).len(),
+        5 => _number_letter_counts(5).len(),
+        4 => _number_letter_counts(4).len(),
+        3 => _number_letter_counts(3).len(),
+        2 => _number_letter_counts(2).len(),
+        1 => _number_letter_counts(1).len(),
+        z if z >= 100 => {
+            let rem = z % 100;
+            let hundreds = z / 100;
+            let rem_size = if rem == 0 {
+                0
+            } else {
+                "and".len() + {
+                    if (11..=19).contains(&rem) {
+                        let teens = _number_letter_counts(rem);
+                        teens.len()
+                    } else {
+                        let rem2 = rem % 10;
+                        let tens = rem - rem2;
+                        if rem2 == 0 {
+                            let tens = _number_letter_counts(rem);
+                            tens.len()
+                        } else {
+                            let str_tens = _number_letter_counts(tens);
+                            let str_ones = _number_letter_counts(rem2);
+                            str_tens.len() + str_ones.len()
+                        }
+                    }
+                }
+            };
+            let str_hundreds = format!("{}{}", _number_letter_counts(hundreds), "hundred");
+            str_hundreds.len() + rem_size
+        }
+        z if z >= 10 => {
+            let rem = z % 10;
+            if rem == 0 {
+                let tens = _number_letter_counts(z);
+                tens.len()
+            } else {
+                let tens = _number_letter_counts(z - rem);
+                let ones = _number_letter_counts(rem);
+                tens.len() + ones.len()
+            }
+        }
+        _ => unimplemented!(),
+    };
+
+    res + number_letter_counts(max - 1)
+}
+
 main!(|args: Cli| {
     let time = std::time::SystemTime::now();
 
@@ -223,6 +338,7 @@ main!(|args: Cli| {
         5 => smallest_multiple(20),
         12 => divisible_triangle(500),
         15 => square_lattice(21),
+        17 => number_letter_counts(1000),
         20 => factorial_digit_sum(100),
         25 => fib_term_len(1000),
         _ => unimplemented!(),
