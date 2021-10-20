@@ -243,7 +243,7 @@ fn _number_letter_counts(val: usize) -> &'static str {
         (3, "three"),
         (2, "two"),
         (1, "one"),
-        (0, "")
+        (0, ""),
     ]
     .into_iter()
     .collect::<HashMap<usize, _>>();
@@ -252,7 +252,9 @@ fn _number_letter_counts(val: usize) -> &'static str {
 }
 
 fn number_letter_counts(max: usize) -> usize {
-    if max == 0 { return 0; }
+    if max == 0 {
+        return 0;
+    }
 
     let res = match max {
         1000 => _number_letter_counts(1000).len(),
@@ -327,6 +329,34 @@ fn number_letter_counts(max: usize) -> usize {
     res + number_letter_counts(max - 1)
 }
 
+fn amicable_numbers(max: usize) -> usize {
+    let mut amicable_sum = 0;
+    (2..max)
+        .map(|num| {
+            (
+                num,
+                (1..num)
+                    .filter(|num2| num % num2 == 0)
+                    .reduce(|a, b| a + b)
+                    .unwrap(),
+            )
+        })
+        .fold(HashMap::new(), |mut map, (idx, d)| {
+            map.insert(idx, d);
+            if map
+                .get(&d)
+                .map(|v| *v == idx && *v != d)
+                .unwrap_or_else(|| false)
+            {
+                amicable_sum += d + idx;
+            }
+
+            map
+        });
+
+    amicable_sum
+}
+
 main!(|args: Cli| {
     let time = std::time::SystemTime::now();
 
@@ -340,6 +370,7 @@ main!(|args: Cli| {
         15 => square_lattice(21),
         17 => number_letter_counts(1000),
         20 => factorial_digit_sum(100),
+        21 => amicable_numbers(10000),
         25 => fib_term_len(1000),
         _ => unimplemented!(),
     };
