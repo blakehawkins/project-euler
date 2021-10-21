@@ -8,6 +8,24 @@ use num_bigint::{BigUint, ToBigUint};
 use quicli::prelude::*;
 use std::fmt;
 
+const MAXIMUM_PATH_TRIANGLE_1: &str = "75
+95 64
+17 47 82
+18 35 87 10
+20 04 82 47 65
+19 01 23 75 03 34
+88 02 77 73 07 63 67
+99 65 04 28 06 16 70 92
+41 41 26 56 83 40 80 70 33
+41 48 72 33 47 32 37 16 94 29
+53 71 44 65 25 43 91 52 97 51 14
+70 11 33 28 77 73 17 78 39 68 17 57
+91 71 52 38 17 14 91 43 58 50 27 29 48
+63 66 04 68 89 53 67 30 73 16 69 87 40 31
+04 62 98 27 23 09 70 98 73 93 38 53 60 04 23";
+
+const MAXIMUM_PATH_TRIANGLE_67: &str = include_str!("p067_triangle.txt");
+
 #[derive(Debug, StructOpt)]
 struct Cli {
     problem_number: usize,
@@ -357,6 +375,32 @@ fn amicable_numbers(max: usize) -> usize {
     amicable_sum
 }
 
+fn parse_triangle(raw_triangle: &str) -> Vec<Vec<usize>> {
+    raw_triangle
+        .split('\n')
+        .map(|line| {
+            line.split_whitespace()
+                .map(|val| val.parse::<usize>().unwrap())
+                .collect()
+        })
+        .collect_vec()
+}
+
+fn maximum_path_sum(raw_triangle: &str) -> usize {
+    let mut triangle = parse_triangle(raw_triangle);
+
+    (0..triangle.len() - 1).rev().for_each(|row_idx| {
+        (0..triangle[row_idx].len()).rev().for_each(|cell_idx| {
+            triangle[row_idx][cell_idx] += std::cmp::max(
+                triangle[row_idx + 1][cell_idx],
+                triangle[row_idx + 1][cell_idx + 1],
+            );
+        });
+    });
+
+    triangle[0][0]
+}
+
 main!(|args: Cli| {
     let time = std::time::SystemTime::now();
 
@@ -369,9 +413,11 @@ main!(|args: Cli| {
         12 => divisible_triangle(500),
         15 => square_lattice(21),
         17 => number_letter_counts(1000),
+        18 => maximum_path_sum(MAXIMUM_PATH_TRIANGLE_1),
         20 => factorial_digit_sum(100),
         21 => amicable_numbers(10000),
         25 => fib_term_len(1000),
+        67 => maximum_path_sum(MAXIMUM_PATH_TRIANGLE_67),
         _ => unimplemented!(),
     };
 
