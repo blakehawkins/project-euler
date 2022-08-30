@@ -1,11 +1,8 @@
-#[macro_use]
-extern crate quicli;
-
 use std::collections::HashMap;
 
 use itertools::Itertools;
 use num_bigint::{BigUint, ToBigUint};
-use quicli::prelude::*;
+use structopt::StructOpt;
 use std::fmt;
 
 const MAXIMUM_PATH_TRIANGLE_1: &str = "75
@@ -401,7 +398,8 @@ fn maximum_path_sum(raw_triangle: &str) -> usize {
     triangle[0][0]
 }
 
-main!(|args: Cli| {
+fn main() {
+    let args = Cli::from_args();
     let time = std::time::SystemTime::now();
 
     let soln = match args.problem_number {
@@ -422,4 +420,4 @@ main!(|args: Cli| {
     };
 
     println!("{}\t{}", MyDuration::from(time.elapsed().unwrap()), soln);
-});
+}
