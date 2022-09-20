@@ -5,6 +5,6 @@ authors = ["Blake"]
 edition = "2021"
 
 [dependencies]
+clap = { version = "3", features = ["derive"] }
 itertools = "0.7.3"
 num-bigint = "0.4.3"
-structopt = "0.3"

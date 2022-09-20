@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use itertools::Itertools;
 use num_bigint::{BigUint, ToBigUint};
-use structopt::StructOpt;
+use clap::StructOpt;
 use std::fmt;
 
 const MAXIMUM_PATH_TRIANGLE_1: &str = "75
