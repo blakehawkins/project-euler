@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use itertools::Itertools;
 use num_bigint::{BigUint, ToBigUint};
-use clap::StructOpt;
+use clap::Parser;
 use std::fmt;
 
 const MAXIMUM_PATH_TRIANGLE_1: &str = "75
@@ -23,7 +23,7 @@ const MAXIMUM_PATH_TRIANGLE_1: &str = "75
 
 const MAXIMUM_PATH_TRIANGLE_67: &str = include_str!("p067_triangle.txt");
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Parser)]
 struct Cli {
     problem_number: usize,
 }
@@ -399,7 +399,7 @@ fn maximum_path_sum(raw_triangle: &str) -> usize {
 }
 
 fn main() {
-    let args = Cli::from_args();
+    let args = Cli::parse();
     let time = std::time::SystemTime::now();
 
     let soln = match args.problem_number {
