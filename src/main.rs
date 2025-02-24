@@ -1,10 +1,11 @@
+#![deny(unused)]
+
 use std::collections::HashMap;
 
 use clap::Parser;
 use itertools::Itertools;
 use num_bigint::{BigUint, ToBigUint};
 use problem24::lexicographic_decimal_permutation;
-use std::fmt;
 
 pub mod problem24;
 
@@ -29,22 +30,6 @@ const MAXIMUM_PATH_TRIANGLE_67: &str = include_str!("p067_triangle.txt");
 #[derive(Debug, Parser)]
 struct Cli {
     problem_number: usize,
-}
-
-struct MyDuration {
-    pub d: std::time::Duration,
-}
-
-impl From<std::time::Duration> for MyDuration {
-    fn from(d: std::time::Duration) -> Self {
-        MyDuration { d }
-    }
-}
-
-impl fmt::Display for MyDuration {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}'{}\"", self.d.as_secs() / 60, self.d.as_secs() % 60)
-    }
 }
 
 fn multiples_of_3_and_5(n: usize) -> usize {
@@ -219,13 +204,13 @@ fn square_lattice(dim: usize) -> usize {
 }
 
 fn fib_term_len(len: usize) -> usize {
-    let mut gen = (2, 1.to_biguint().unwrap(), 1.to_biguint().unwrap());
+    let mut gen_ = (2, 1.to_biguint().unwrap(), 1.to_biguint().unwrap());
 
     loop {
-        gen = (gen.0 + 1, gen.2.clone(), gen.1 + gen.2);
+        gen_ = (gen_.0 + 1, gen_.2.clone(), gen_.1 + gen_.2);
 
-        if gen.2.to_string().len() >= len {
-            break gen.0;
+        if gen_.2.to_string().len() >= len {
+            break gen_.0;
         }
     }
 }
@@ -422,5 +407,5 @@ fn main() {
         _ => unimplemented!(),
     };
 
-    println!("{}\t{}", MyDuration::from(time.elapsed().unwrap()), soln);
+    println!("{:?}\t{}", time.elapsed().unwrap(), soln);
 }

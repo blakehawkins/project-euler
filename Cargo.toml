@@ -2,9 +2,9 @@
 name = "project-euler"
 version = "0.1.0"
 authors = ["Blake"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
 itertools = "0.14"
-num-bigint = "0.4.3"
+num-bigint = "0.4"
