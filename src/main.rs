@@ -1,9 +1,12 @@
 use std::collections::HashMap;
 
+use clap::Parser;
 use itertools::Itertools;
 use num_bigint::{BigUint, ToBigUint};
-use clap::Parser;
+use problem24::lexicographic_decimal_permutation;
 use std::fmt;
+
+pub mod problem24;
 
 const MAXIMUM_PATH_TRIANGLE_1: &str = "75
 95 64
@@ -46,7 +49,6 @@ impl fmt::Display for MyDuration {
 
 fn multiples_of_3_and_5(n: usize) -> usize {
     (3..n)
-        .into_iter()
         .filter(|x| x % 3 == 0 || x % 5 == 0)
         .fold(0, |x, accum| accum + x)
 }
@@ -66,7 +68,7 @@ fn even_fibonacci_numbers(f: usize) -> usize {
 }
 
 fn _primes_through(z: usize) -> Vec<usize> {
-    let mut scratch: Vec<usize> = (2..z).into_iter().collect();
+    let mut scratch: Vec<usize> = (2..z).collect();
     for s in scratch.clone().iter() {
         scratch.retain(|&x| x == *s || x % s != 0);
     }
@@ -118,13 +120,13 @@ fn smallest_multiple(upper: usize) -> usize {
     let soln;
 
     loop {
-        let mut scratch: Vec<usize> = (tr..(tr * 2)).into_iter().collect();
+        let mut scratch: Vec<usize> = (tr..(tr * 2)).collect();
         for sieve in 11..(upper + 1) {
             scratch.retain(|&x| x % sieve == 0);
         }
 
-        if scratch.get(0).is_some() {
-            soln = *scratch.get(0).unwrap();
+        if !scratch.is_empty() {
+            soln = *scratch.first().unwrap();
             break;
         }
 
@@ -177,7 +179,7 @@ fn prime_ftor_count(val: usize) -> usize {
     prime_ftors.sort_unstable();
     prime_ftors
         .into_iter()
-        .group_by(|elt| *elt)
+        .chunk_by(|elt| *elt)
         .into_iter()
         .map(|(_k, grp)| grp.count() + 1)
         .product()
@@ -213,7 +215,7 @@ fn square_lattice(dim: usize) -> usize {
         }
     }
 
-    buf[0][0] as usize
+    buf[0][0]
 }
 
 fn fib_term_len(len: usize) -> usize {
@@ -414,6 +416,7 @@ fn main() {
         18 => maximum_path_sum(MAXIMUM_PATH_TRIANGLE_1),
         20 => factorial_digit_sum(100),
         21 => amicable_numbers(10000),
+        24 => lexicographic_decimal_permutation(1_000_000),
         25 => fib_term_len(1000),
         67 => maximum_path_sum(MAXIMUM_PATH_TRIANGLE_67),
         _ => unimplemented!(),

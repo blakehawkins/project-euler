@@ -6,5 +6,5 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
-itertools = "0.7.3"
+itertools = "0.14"
 num-bigint = "0.4.3"
